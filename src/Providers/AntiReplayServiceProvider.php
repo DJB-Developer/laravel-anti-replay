@@ -9,26 +9,46 @@ use DJBDeveloper\LaravelAntiReplay\Http\Middleware\AntiReplayMiddleware;
 class AntiReplayServiceProvider extends ServiceProvider
 {
     /**
+     * The base path of the package.
+     *
+     * @var string
+     */
+    protected $packageBasePath;
+
+    public function __construct($app)
+    {
+        parent::__construct($app);
+        $this->packageBasePath = __DIR__ . '/../../';
+    }
+
+    /**
      * Bootstrap any application services.
      *
+     * @param \Illuminate\Routing\Router $router
      * @return void
      */
     public function boot(Router $router)
     {
-        // 1. 加载路由
-        $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+        $this->loadRoutesFrom($this->packageBasePath . 'routes/web.php');
 
-        // 2. 加载视图
-        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'anti-replay');
+        $this->loadViewsFrom($this->packageBasePath . 'resources/views', 'anti-replay');
 
-        // 3. 注册中间件别名，方便用户使用
         $router->aliasMiddleware('anti.replay', AntiReplayMiddleware::class);
         
-        // 4. 使视图文件可发布
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../../resources/views' => resource_path('views/vendor/anti-replay'),
+                $this->packageBasePath . 'resources/views' => resource_path('views/vendor/anti-replay'),
             ], 'views');
         }
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+
     }
 }
