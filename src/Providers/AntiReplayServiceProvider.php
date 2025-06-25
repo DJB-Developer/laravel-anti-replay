@@ -18,7 +18,7 @@ class AntiReplayServiceProvider extends ServiceProvider
     public function __construct($app)
     {
         parent::__construct($app);
-        $this->packageBasePath = __DIR__ . '/../../';
+        $this->packageBasePath = dirname(__DIR__, 2) . '/';
     }
 
     /**
